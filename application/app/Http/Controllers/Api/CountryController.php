@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Country::with('globalRegion')->orderBy('name')->paginate($this->adminPageSize());
+        return Country::with('globalRegion')->orderBy('name')->when($request->input('search'), fn($q, $s) => $q->where('name', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

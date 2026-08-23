@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Order::with(['customer', 'shop'])->paginate($this->adminPageSize());
+        return Order::with(['customer', 'shop'])->when($request->input('search'), fn($q, $s) => is_numeric($s) ? $q->where('id', (int) $s) : $q)
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

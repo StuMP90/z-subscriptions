@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class IssueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Issue::with('publication')->paginate($this->adminPageSize());
+        return Issue::with('publication')->when($request->input('search'), fn($q, $s) => is_numeric($s) ? $q->where('issue_number', (int) $s) : $q)
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

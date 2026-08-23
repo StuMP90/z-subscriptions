@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class CountyStateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return CountyState::with('country')->orderBy('name')->paginate($this->adminPageSize());
+        return CountyState::with('country')->orderBy('name')->when($request->input('search'), fn($q, $s) => $q->where('name', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

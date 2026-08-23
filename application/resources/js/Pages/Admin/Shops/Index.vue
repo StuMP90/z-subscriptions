@@ -7,6 +7,7 @@ import Pagination from '../../../Components/Pagination.vue';
 const items = ref([]);
 const currentPage = ref(1);
 const lastPage = ref(1);
+const search = ref('');
 const regions = ref([]);
 const editing = ref(null);
 
@@ -24,7 +25,7 @@ const fields = [
 
 const fetchItems = async (page = 1) => {
     currentPage.value = page;
-    const res = await fetch(`${endpoint}?page=${page}`, {
+    const res = await fetch(`${endpoint}?page=${page}&search=${encodeURIComponent(search.value)}`, {
         credentials: 'include',
         headers: { 'Accept': 'application/json' },
     });
@@ -35,6 +36,8 @@ const fetchItems = async (page = 1) => {
 };
 
 const goToPage = (page) => fetchItems(page);
+
+const handleSearch = () => { currentPage.value = 1; fetchItems(1); };
 
 const fetchRegions = async () => {
     const res = await fetch('https://api.zsubscriptions.local/global-regions', {
@@ -88,7 +91,16 @@ onMounted(() => { fetchItems(1); fetchRegions(); });
             Add Shop
         </button>
 
-        <table class="w-full bg-white rounded shadow">
+                <div class="mb-4 flex gap-2">
+            <input
+                v-model="search"
+                type="text"
+                placeholder="Search..."
+                @input="handleSearch"
+                class="px-3 py-2 border rounded w-full max-w-md"
+            />
+        </div>
+<table class="w-full bg-white rounded shadow">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="p-3 text-left">Name</th>

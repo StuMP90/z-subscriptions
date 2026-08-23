@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Offer::with(['product', 'currency', 'frequency'])->paginate($this->adminPageSize());
+        return Offer::with(['product', 'currency', 'frequency'])->when($request->input('search'), fn($q, $s) => $q->whereHas('product', fn($pq) => $pq->where('name', 'ilike', "%{$s}%")))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

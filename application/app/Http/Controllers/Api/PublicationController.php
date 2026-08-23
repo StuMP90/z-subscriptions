@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class PublicationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Publication::with('publicationFrequency')->paginate($this->adminPageSize());
+        return Publication::with('publicationFrequency')->when($request->input('search'), fn($q, $s) => $q->where('name', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

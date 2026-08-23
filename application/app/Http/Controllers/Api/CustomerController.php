@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Customer::with('shop')->paginate($this->adminPageSize());
+        return Customer::with('shop')->when($request->input('search'), fn($q, $s) => $q->where('name', 'ilike', "%{$s}%")->orWhere('email', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

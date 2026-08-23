@@ -7,6 +7,7 @@ import Pagination from '../../../Components/Pagination.vue';
 const items = ref([]);
 const currentPage = ref(1);
 const lastPage = ref(1);
+const search = ref('');
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/offers';
@@ -30,7 +31,7 @@ const fields = [
 
 const fetchItems = async (page = 1) => {
     currentPage.value = page;
-    const res = await fetch(`${endpoint}?page=${page}`, {
+    const res = await fetch(`${endpoint}?page=${page}&search=${encodeURIComponent(search.value)}`, {
         credentials: 'include',
         headers: { 'Accept': 'application/json' },
     });
@@ -41,6 +42,8 @@ const fetchItems = async (page = 1) => {
 };
 
 const goToPage = (page) => fetchItems(page);
+
+const handleSearch = () => { currentPage.value = 1; fetchItems(1); };
 
 const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true, is_setup_offer: false, base_price: 0, price: 0, global_region_ids: [] }; };
 const startEdit = (item) => {
@@ -86,7 +89,16 @@ onMounted(() => fetchItems(1));
             Add Offer
         </button>
 
-        <table class="w-full bg-white rounded shadow">
+                <div class="mb-4 flex gap-2">
+            <input
+                v-model="search"
+                type="text"
+                placeholder="Search..."
+                @input="handleSearch"
+                class="px-3 py-2 border rounded w-full max-w-md"
+            />
+        </div>
+<table class="w-full bg-white rounded shadow">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="p-3 text-left">Product</th>

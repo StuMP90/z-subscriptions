@@ -9,9 +9,10 @@ use Illuminate\Validation\Rule;
 
 class SettingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Setting::with('shop')->orderBy('group')->orderBy('key')->paginate($this->adminPageSize());
+        return Setting::with('shop')->orderBy('group')->orderBy('key')->when($request->input('search'), fn($q, $s) => $q->where('key', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

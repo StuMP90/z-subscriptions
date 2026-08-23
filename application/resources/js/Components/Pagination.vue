@@ -16,6 +16,13 @@ const change = (page) => {
     <div v-if="lastPage > 1" class="flex items-center gap-2 mt-4">
         <button
             :disabled="currentPage <= 1"
+            @click="change(1)"
+            class="px-3 py-1 bg-white border rounded disabled:opacity-50"
+        >
+            First
+        </button>
+        <button
+            :disabled="currentPage <= 1"
             @click="change(currentPage - 1)"
             class="px-3 py-1 bg-white border rounded disabled:opacity-50"
         >
@@ -28,6 +35,13 @@ const change = (page) => {
             class="px-3 py-1 bg-white border rounded disabled:opacity-50"
         >
             Next
+        </button>
+        <button
+            :disabled="currentPage >= lastPage"
+            @click="change(lastPage)"
+            class="px-3 py-1 bg-white border rounded disabled:opacity-50"
+        >
+            Last
         </button>
     </div>
 </template>

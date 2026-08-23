@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class GlobalRegionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return GlobalRegion::orderBy('name')->paginate($this->adminPageSize());
+        return GlobalRegion::orderBy('name')->when($request->input('search'), fn($q, $s) => $q->where('name', 'ilike', "%{$s}%")->orWhere('code', 'ilike', "%{$s}%"))
+            ->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

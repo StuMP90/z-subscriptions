@@ -65,11 +65,18 @@ Route::middleware(['web', 'auth'])
             $currency = Currency::where('is_base_currency', true)->first() ?? Currency::first();
             $currencyId = $currency?->id;
 
+            $dateFormat = DB::table('settings')
+                ->where('shop_id', null)
+                ->where('group', 'general')
+                ->where('key', 'Default Date Display Format')
+                ->value('value') ?? 'd/m/Y';
+
             return response()->json([
                 'product_type_id' => $productTypeId,
                 'global_region_ids' => $regionId ? [$regionId] : [],
                 'currency_id' => $currencyId,
                 'default_currency_id' => $currencyId,
+                'date_format' => $dateFormat,
             ]);
         });
 

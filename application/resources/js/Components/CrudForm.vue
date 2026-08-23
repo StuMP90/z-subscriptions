@@ -37,6 +37,9 @@ const normalise = (value) => {
             const arr = Array.isArray(clone[field.name]) ? clone[field.name] : [];
             clone[field.name] = arr.map(v => String(v));
         }
+        if (field.type === 'date') {
+            clone[field.name] = clone[field.name] ? String(clone[field.name]).slice(0, 10) : '';
+        }
     }
     return clone;
 };
@@ -211,6 +214,13 @@ const cancel = () => {
                     </option>
                 </select>
             </template>
+            <input
+                v-else-if="field.type === 'date'"
+                :value="local[field.name]"
+                type="date"
+                class="border p-2 w-full rounded"
+                @input="local[field.name] = $event.target.value"
+            />
             <textarea
                 v-else-if="field.type === 'textarea'"
                 v-model="local[field.name]"

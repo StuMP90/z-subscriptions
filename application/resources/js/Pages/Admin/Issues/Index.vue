@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import AdminLayout from '../../../Layouts/AdminLayout.vue';
 import CrudForm from '../../../Components/CrudForm.vue';
 import Pagination from '../../../Components/Pagination.vue';
+import useDateFormat from '../../../Composables/useDateFormat.js';
 
 const items = ref([]);
 const currentPage = ref(1);
@@ -11,6 +12,7 @@ const search = ref('');
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/issues';
+const { formatDate } = useDateFormat();
 
 const fields = [
     { name: 'publication_id', label: 'Publication', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publications' },
@@ -104,7 +106,7 @@ onMounted(() => fetchItems(1));
                     <td class="p-3">{{ item.publication?.name }}</td>
                     <td class="p-3">{{ item.name }}</td>
                     <td class="p-3">{{ item.issue_number }}</td>
-                    <td class="p-3">{{ item.publication_date }}</td>
+                    <td class="p-3">{{ formatDate(item.publication_date) }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">

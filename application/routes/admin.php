@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\CountyStateController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GlobalRegionController;
 use App\Http\Controllers\Admin\IssueController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
@@ -29,4 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class)->only(['index']);
     Route::resource('orders', OrderController::class)->only(['index']);
     Route::resource('settings', SettingController::class)->only(['index']);
+    Route::resource('global-regions', GlobalRegionController::class)->only(['index']);
+    Route::resource('countries', CountryController::class)->only(['index']);
+    Route::resource('county-states', CountyStateController::class)->only(['index']);
 });

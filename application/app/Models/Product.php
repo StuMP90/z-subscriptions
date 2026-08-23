@@ -17,6 +17,7 @@ class Product extends Model
         'has_variants' => 'boolean',
         'track_stock' => 'boolean',
         'allow_backorders' => 'boolean',
+        'is_active' => 'boolean',
         'is_available_on_web' => 'boolean',
         'stock_quantity' => 'integer',
         'global_region_ids' => 'array',

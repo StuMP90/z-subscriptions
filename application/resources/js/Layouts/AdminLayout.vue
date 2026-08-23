@@ -31,6 +31,9 @@ const menu = [
         items: [
             { label: 'Settings', href: '/settings' },
             { label: 'Shops', href: '/shops' },
+            { label: 'Regions', href: '/global-regions' },
+            { label: 'Countries', href: '/countries' },
+            { label: 'Counties / States', href: '/county-states' },
         ],
     },
 ];

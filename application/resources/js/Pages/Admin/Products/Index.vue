@@ -4,6 +4,7 @@ import AdminLayout from '../../../Layouts/AdminLayout.vue';
 import CrudForm from '../../../Components/CrudForm.vue';
 
 const items = ref([]);
+const regions = ref([]);
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/products';
@@ -21,7 +22,7 @@ const fields = [
     { name: 'stock_quantity', label: 'Stock', type: 'number' },
     { name: 'allow_backorders', label: 'Allow Backorders', type: 'checkbox' },
     { name: 'download_url', label: 'Download URL', type: 'text' },
-    { name: 'status', label: 'Status', type: 'text' },
+    { name: 'is_active', label: 'Active', type: 'checkbox' },
     { name: 'is_available_on_web', label: 'Available on Web', type: 'checkbox' },
     { name: 'global_region_ids', label: 'Availability Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
 ];
@@ -34,7 +35,23 @@ const fetchItems = async () => {
     items.value = await res.json();
 };
 
-const startAdd = () => { editing.value = { product_type_id: '', status: 'active', stock_quantity: 0, is_available_on_web: true, global_region_ids: [] }; };
+const fetchRegions = async () => {
+    const res = await fetch('https://api.zsubscriptions.local/global-regions', {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' },
+    });
+    regions.value = await res.json();
+};
+
+const regionCodes = (ids) => {
+    if (! ids || ! ids.length) return '—';
+    return regions.value
+        .filter(region => ids.includes(region.id))
+        .map(region => region.code)
+        .join(', ') || '—';
+};
+
+const startAdd = () => { editing.value = { product_type_id: '', slug: '', stock_quantity: 0, is_active: true, is_available_on_web: true, global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(); };
@@ -49,7 +66,10 @@ const remove = async (item) => {
     await fetchItems();
 };
 
-onMounted(fetchItems);
+onMounted(() => {
+    fetchItems();
+    fetchRegions();
+});
 </script>
 
 <template>
@@ -79,8 +99,9 @@ onMounted(fetchItems);
                     <th class="p-3 text-left">Name</th>
                     <th class="p-3 text-left">Product Type</th>
                     <th class="p-3 text-left">Stock</th>
-                    <th class="p-3 text-left">Status</th>
+                    <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Web</th>
+                    <th class="p-3 text-left">Regions</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
             </thead>
@@ -90,8 +111,9 @@ onMounted(fetchItems);
                     <td class="p-3">{{ item.name }}</td>
                     <td class="p-3">{{ item.product_type?.name }}</td>
                     <td class="p-3">{{ item.stock_quantity }}</td>
-                    <td class="p-3">{{ item.status }}</td>
+                    <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
+                    <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>
                         <button @click="remove(item)" class="text-red-600 hover:underline">Delete</button>

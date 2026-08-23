@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\CountryController;
+use App\Http\Controllers\Api\CountyStateController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\GlobalRegionController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\IssueController;
@@ -32,12 +35,12 @@ Route::middleware(['web', 'auth'])
         Route::apiResource('publications', PublicationController::class);
         Route::apiResource('issues', IssueController::class);
         Route::apiResource('settings', SettingController::class);
+        Route::apiResource('global-regions', GlobalRegionController::class);
+        Route::apiResource('countries', CountryController::class);
+        Route::apiResource('county-states', CountyStateController::class);
 
         Route::get('/currencies', function () {
             return Currency::all();
-        });
-        Route::get('/global-regions', function () {
-            return GlobalRegion::all();
         });
         Route::get('/subscription-frequencies', function () {
             return SubscriptionFrequency::all();

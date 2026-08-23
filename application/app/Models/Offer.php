@@ -9,6 +9,8 @@ class Offer extends Model
 {
     use HasFactory;
 
+    protected $table = 'product_offers';
+
     protected $guarded = [];
 
     protected $casts = [

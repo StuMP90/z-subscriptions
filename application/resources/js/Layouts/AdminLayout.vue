@@ -21,9 +21,9 @@ const menu = [
         items: [
             { label: 'Users', href: '/users' },
             { label: 'Products', href: '/products' },
+            { label: 'Product Offers', href: '/offers' },
             { label: 'Publications', href: '/publications' },
             { label: 'Issues', href: '/issues' },
-            { label: 'Offers', href: '/offers' },
         ],
     },
     {

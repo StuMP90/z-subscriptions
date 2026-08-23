@@ -231,6 +231,7 @@ const cancel = () => {
                 v-else
                 v-model="local[field.name]"
                 :type="field.type"
+                :step="field.step"
                 class="border p-2 w-full rounded"
             />
         </div>

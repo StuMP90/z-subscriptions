@@ -30,15 +30,11 @@ const regionCodes = (ids) => {
 const fields = [
     { name: 'product_id', label: 'Product', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/products' },
     { name: 'product_variant_id', label: 'Variant', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/product-variants', nullable: true },
-    { name: 'shop_id', label: 'Shop', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/shops' },
+    { name: 'shop_id', label: 'Shop', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/shops', nullable: true },
     { name: 'currency_id', label: 'Currency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/currencies', labelKey: 'code' },
-    { name: 'frequency_id', label: 'Frequency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publication-frequencies' },
-    { name: 'base_price', label: 'Base Price', type: 'number' },
-    { name: 'price', label: 'Price', type: 'number' },
+    { name: 'price', label: 'Price', type: 'number', step: '0.01' },
     { name: 'valid_from', label: 'Valid From', type: 'date' },
     { name: 'valid_to', label: 'Valid To', type: 'date' },
-    { name: 'is_setup_offer', label: 'Setup Offer', type: 'checkbox' },
-    { name: 'setup_config', label: 'Setup Config (JSON)', type: 'textarea' },
     { name: 'is_active', label: 'Active', type: 'checkbox' },
     { name: 'is_available_on_web', label: 'Available on Web', type: 'checkbox' },
     { name: 'global_region_ids', label: 'Availability Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
@@ -75,7 +71,7 @@ onMounted(() => { fetchItems(1); fetchRegions(); });
 
 <template>
     <AdminLayout>
-        <h1 class="text-2xl font-semibold mb-4">Offers</h1>
+        <h1 class="text-2xl font-semibold mb-4">Product Offers</h1>
 
         <CrudForm
             v-if="editing"
@@ -90,7 +86,7 @@ onMounted(() => { fetchItems(1); fetchRegions(); });
             @click="startAdd"
             class="mb-4 px-4 py-2 bg-blue-600 text-white rounded"
         >
-            Add Offer
+            Add Product Offer
         </button>
 
                 <div class="mb-4 flex gap-2">
@@ -108,8 +104,6 @@ onMounted(() => { fetchItems(1); fetchRegions(); });
                     <th class="p-3 text-left">Product</th>
                     <th class="p-3 text-left">Shop</th>
                     <th class="p-3 text-left">Currency</th>
-                    <th class="p-3 text-left">Frequency</th>
-                    <th class="p-3 text-left">Base</th>
                     <th class="p-3 text-left">Price</th>
                     <th class="p-3 text-left">Valid From</th>
                     <th class="p-3 text-left">Regions</th>
@@ -123,8 +117,6 @@ onMounted(() => { fetchItems(1); fetchRegions(); });
                     <td class="p-3">{{ item.product?.name }}</td>
                     <td class="p-3">{{ item.shop?.name }}</td>
                     <td class="p-3">{{ item.currency?.code }}</td>
-                    <td class="p-3">{{ item.frequency?.name }}</td>
-                    <td class="p-3">{{ item.base_price }}</td>
                     <td class="p-3">{{ item.price }}</td>
                     <td class="p-3">{{ item.valid_from }}</td>
                     <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>

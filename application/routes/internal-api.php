@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\IssueController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PublicationController;
+use App\Http\Controllers\Api\PublicationFrequencyController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\UserController;
@@ -16,7 +17,6 @@ use App\Models\Currency;
 use App\Models\GlobalRegion;
 use App\Models\ProductType;
 use App\Models\ProductVariant;
-use App\Models\SubscriptionFrequency;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +33,7 @@ Route::middleware(['web', 'auth'])
         Route::apiResource('products', ProductController::class);
         Route::apiResource('shops', ShopController::class);
         Route::apiResource('publications', PublicationController::class);
+        Route::apiResource('publication-frequencies', PublicationFrequencyController::class);
         Route::apiResource('issues', IssueController::class);
         Route::apiResource('settings', SettingController::class);
         Route::apiResource('global-regions', GlobalRegionController::class);
@@ -41,9 +42,6 @@ Route::middleware(['web', 'auth'])
 
         Route::get('/currencies', function () {
             return Currency::all();
-        });
-        Route::get('/subscription-frequencies', function () {
-            return SubscriptionFrequency::all();
         });
         Route::get('/product-variants', function () {
             return ProductVariant::all();

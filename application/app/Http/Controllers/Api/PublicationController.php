@@ -10,7 +10,7 @@ class PublicationController extends Controller
 {
     public function index()
     {
-        return Publication::paginate($this->adminPageSize());
+        return Publication::with('publicationFrequency')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)
@@ -22,6 +22,8 @@ class PublicationController extends Controller
             'image' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'publication_frequency_id' => 'required|integer|exists:publication_frequencies,id',
+            'frequency' => 'required|integer|min:1',
             'global_region_ids' => 'nullable|array',
             'global_region_ids.*' => 'integer',
         ]);
@@ -40,6 +42,8 @@ class PublicationController extends Controller
             'image' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'publication_frequency_id' => 'required|integer|exists:publication_frequencies,id',
+            'frequency' => 'required|integer|min:1',
             'global_region_ids' => 'nullable|array',
             'global_region_ids.*' => 'integer',
         ]);

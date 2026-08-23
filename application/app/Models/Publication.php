@@ -15,7 +15,13 @@ class Publication extends Model
         'is_active' => 'boolean',
         'is_available_on_web' => 'boolean',
         'global_region_ids' => 'array',
+        'frequency' => 'integer',
     ];
+
+    public function publicationFrequency()
+    {
+        return $this->belongsTo(PublicationFrequency::class);
+    }
 
     public function regions()
     {

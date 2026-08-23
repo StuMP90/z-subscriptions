@@ -45,6 +45,6 @@ class Offer extends Model
 
     public function frequency()
     {
-        return $this->belongsTo(SubscriptionFrequency::class, 'frequency_id');
+        return $this->belongsTo(PublicationFrequency::class, 'frequency_id');
     }
 }

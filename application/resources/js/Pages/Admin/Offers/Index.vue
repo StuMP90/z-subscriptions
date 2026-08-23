@@ -16,7 +16,7 @@ const fields = [
     { name: 'product_variant_id', label: 'Variant', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/product-variants', nullable: true },
     { name: 'shop_id', label: 'Shop', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/shops' },
     { name: 'currency_id', label: 'Currency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/currencies', labelKey: 'code' },
-    { name: 'frequency_id', label: 'Frequency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/subscription-frequencies' },
+    { name: 'frequency_id', label: 'Frequency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publication-frequencies' },
     { name: 'base_price', label: 'Base Price', type: 'number' },
     { name: 'price', label: 'Price', type: 'number' },
     { name: 'valid_from', label: 'Valid From', type: 'date' },

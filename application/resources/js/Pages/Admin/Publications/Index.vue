@@ -17,6 +17,8 @@ const fields = [
     { name: 'slug', label: 'Slug', type: 'text' },
     { name: 'description', label: 'Description', type: 'textarea' },
     { name: 'image', label: 'Image', type: 'text' },
+    { name: 'publication_frequency_id', label: 'Frequency Unit', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publication-frequencies' },
+    { name: 'frequency', label: 'Frequency', type: 'number' },
     { name: 'is_active', label: 'Active', type: 'checkbox' },
     { name: 'is_available_on_web', label: 'Available on Web', type: 'checkbox' },
     { name: 'global_region_ids', label: 'Availability Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
@@ -53,7 +55,7 @@ const regionCodes = (ids) => {
         .join(', ') || '—';
 };
 
-const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true, global_region_ids: [] }; };
+const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true, frequency: 1, publication_frequency_id: '', global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(currentPage.value); };
@@ -101,6 +103,7 @@ onMounted(() => {
                     <th class="p-3 text-left">Slug</th>
                     <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Web</th>
+                    <th class="p-3 text-left">Frequency</th>
                     <th class="p-3 text-left">Regions</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
@@ -111,6 +114,7 @@ onMounted(() => {
                     <td class="p-3">{{ item.slug }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
+                    <td class="p-3">{{ item.frequency }} {{ item.publication_frequency?.name }}</td>
                     <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>

@@ -27,14 +27,19 @@ const menu = [
         ],
     },
     {
+        label: 'Reference',
+        items: [
+            { label: 'Regions', href: '/global-regions' },
+            { label: 'Countries', href: '/countries' },
+            { label: 'Counties / States', href: '/county-states' },
+        ],
+    },
+    {
         label: 'System',
         items: [
             { label: 'Settings', href: '/settings' },
             { label: 'Cache Control', href: '/cache-control' },
             { label: 'Shops', href: '/shops' },
-            { label: 'Regions', href: '/global-regions' },
-            { label: 'Countries', href: '/countries' },
-            { label: 'Counties / States', href: '/county-states' },
         ],
     },
 ];

@@ -8,6 +8,11 @@ abstract class Controller
 {
     protected function adminPageSize(): int
     {
+        $perPage = (int) request()->input('per_page', 0);
+        if ($perPage > 0) {
+            return min($perPage, 1000);
+        }
+
         return (int) (Setting::where('key', 'Default Admin List Page Size')->value('value') ?? 25);
     }
 }

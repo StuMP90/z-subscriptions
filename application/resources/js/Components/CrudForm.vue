@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 
 const props = defineProps({
     endpoint: { type: String, required: true },
@@ -9,23 +9,33 @@ const props = defineProps({
 
 const emit = defineEmits(['saved', 'cancelled']);
 
-const local = ref({ ...props.modelValue });
+const local = reactive({ ...props.modelValue });
 const saving = ref(false);
 const error = ref(null);
 const selectOptions = ref({});
+const selectSearch = reactive({});
 const defaults = ref({});
 const generatedSlug = ref('');
 
+const optionCount = (field) => (field.options || selectOptions.value[field.name] || []).length;
+
 const getOptions = (field) => {
-    if (field.options) return field.options;
-    return selectOptions.value[field.name] || [];
+    const all = field.options || selectOptions.value[field.name] || [];
+    const q = selectSearch[field.name] || '';
+    if (optionCount(field) < 20 || ! q) return all;
+    const term = String(q).toLowerCase();
+    return all.filter(opt => String(opt.label).toLowerCase().includes(term));
 };
 
 const normalise = (value) => {
     const clone = { ...value };
     for (const field of props.fields) {
+        if (field.type === 'select') {
+            clone[field.name] = clone[field.name] == null ? '' : String(clone[field.name]);
+        }
         if (field.type === 'multiselect') {
-            clone[field.name] = Array.isArray(clone[field.name]) ? clone[field.name] : [];
+            const arr = Array.isArray(clone[field.name]) ? clone[field.name] : [];
+            clone[field.name] = arr.map(v => String(v));
         }
     }
     return clone;
@@ -63,27 +73,34 @@ const fetchDefaults = async () => {
     }
 };
 
-watch(() => props.modelValue, (value) => {
-    local.value = applyDefaults(normalise(value));
-    generatedSlug.value = local.value.slug || '';
-}, { deep: true });
+const setLocal = (value) => {
+    const next = applyDefaults(normalise(value));
+    Object.keys(local).forEach(k => delete local[k]);
+    Object.assign(local, next);
+    generatedSlug.value = local.slug || '';
+};
 
-watch(() => local.value?.name, (name) => {
-    if (! name || local.value?.id) return;
+watch(() => props.modelValue, (value) => { setLocal(value); }, { deep: true });
+
+watch(() => local.name, (name) => {
+    if (! name || local.id) return;
     const newSlug = slugify(name);
-    if (isEmpty(local.value?.slug) || local.value.slug === generatedSlug.value) {
-        local.value.slug = newSlug;
+    if (isEmpty(local.slug) || local.slug === generatedSlug.value) {
+        local.slug = newSlug;
         generatedSlug.value = newSlug;
     }
 });
 
 onMounted(async () => {
-    local.value = applyDefaults(normalise(local.value));
-
     for (const field of props.fields) {
+        if (field.type === 'select' || field.type === 'multiselect') {
+            selectSearch[field.name] = '';
+            selectOptions.value[field.name] = field.options || [];
+        }
         if ((field.type === 'select' || field.type === 'multiselect') && field.optionsUrl) {
             try {
-                const res = await fetch(field.optionsUrl, {
+                const sep = field.optionsUrl.includes('?') ? '&' : '?';
+                const res = await fetch(`${field.optionsUrl}${sep}per_page=1000`, {
                     credentials: 'include',
                     headers: { 'Accept': 'application/json' },
                 });
@@ -92,7 +109,7 @@ onMounted(async () => {
                 const valueKey = field.valueKey || 'id';
                 const labelKey = field.labelKey || 'name';
                 selectOptions.value[field.name] = data.map(item => ({
-                    value: item[valueKey],
+                    value: String(item[valueKey]),
                     label: item[labelKey],
                 }));
             } catch (e) {
@@ -102,7 +119,7 @@ onMounted(async () => {
     }
 
     await fetchDefaults();
-    local.value = applyDefaults(local.value);
+    setLocal({ ...local });
 });
 
 const token = typeof document !== 'undefined'
@@ -114,8 +131,8 @@ const save = async () => {
     error.value = null;
 
     try {
-        const method = local.value.id ? 'PUT' : 'POST';
-        const url = local.value.id ? `${props.endpoint}/${local.value.id}` : props.endpoint;
+        const method = local.id ? 'PUT' : 'POST';
+        const url = local.id ? `${props.endpoint}/${local.id}` : props.endpoint;
 
         const res = await fetch(url, {
             method,
@@ -125,7 +142,7 @@ const save = async () => {
                 'Content-Type': 'application/json',
                 ...(token ? { 'X-CSRF-TOKEN': token } : {}),
             },
-            body: JSON.stringify(local.value),
+            body: JSON.stringify(local),
         });
 
         if (! res.ok) {
@@ -161,27 +178,39 @@ const cancel = () => {
                 :type="field.type"
                 class="h-5 w-5"
             />
-            <select
-                v-else-if="field.type === 'select'"
-                v-model="local[field.name]"
-                class="border p-2 w-full rounded"
-            >
-                <option v-if="field.nullable" value="">-- None --</option>
-                <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
-                    {{ opt.label }}
-                </option>
-            </select>
-            <select
-                v-else-if="field.type === 'multiselect'"
-                v-model="local[field.name]"
-                multiple
-                class="border p-2 w-full rounded"
-                size="6"
-            >
-                <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
-                    {{ opt.label }}
-                </option>
-            </select>
+            <template v-else-if="field.type === 'select' || field.type === 'multiselect'">
+                <input
+                    v-if="optionCount(field) >= 20"
+                    :value="selectSearch[field.name]"
+                    type="text"
+                    placeholder="Type to search options..."
+                    class="border p-2 w-full rounded mb-2"
+                    @input="selectSearch[field.name] = $event.target.value"
+                />
+                <select
+                    v-if="field.type === 'select'"
+                    :value="local[field.name]"
+                    class="border p-2 w-full rounded"
+                    size="6"
+                    @change="local[field.name] = $event.target.value"
+                >
+                    <option v-if="field.nullable" value="">-- None --</option>
+                    <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
+                        {{ opt.label }}
+                    </option>
+                </select>
+                <select
+                    v-else-if="field.type === 'multiselect'"
+                    v-model="local[field.name]"
+                    multiple
+                    class="border p-2 w-full rounded"
+                    size="6"
+                >
+                    <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
+                        {{ opt.label }}
+                    </option>
+                </select>
+            </template>
             <textarea
                 v-else-if="field.type === 'textarea'"
                 v-model="local[field.name]"

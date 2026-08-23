@@ -54,10 +54,4 @@ class SettingController extends Controller
         return response()->json($setting);
     }
 
-    public function destroy(Setting $setting)
-    {
-        $setting->delete();
-
-        return response()->noContent();
-    }
 }

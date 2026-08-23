@@ -92,10 +92,4 @@ class ProductController extends Controller
         return $slug;
     }
 
-    public function destroy(Product $product)
-    {
-        $product->delete();
-
-        return response()->noContent();
-    }
 }

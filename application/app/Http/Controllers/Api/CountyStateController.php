@@ -43,10 +43,4 @@ class CountyStateController extends Controller
         return response()->json($countyState);
     }
 
-    public function destroy(CountyState $countyState)
-    {
-        $countyState->delete();
-
-        return response()->noContent();
-    }
 }

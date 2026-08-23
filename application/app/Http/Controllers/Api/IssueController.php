@@ -55,10 +55,4 @@ class IssueController extends Controller
         return response()->json($issue);
     }
 
-    public function destroy(Issue $issue)
-    {
-        $issue->delete();
-
-        return response()->noContent();
-    }
 }

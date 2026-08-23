@@ -55,10 +55,4 @@ class PublicationController extends Controller
         return response()->json($publication);
     }
 
-    public function destroy(Publication $publication)
-    {
-        $publication->delete();
-
-        return response()->noContent();
-    }
 }

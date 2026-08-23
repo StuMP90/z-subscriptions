@@ -69,10 +69,4 @@ class OfferController extends Controller
         return response()->json($offer);
     }
 
-    public function destroy(Offer $offer)
-    {
-        $offer->delete();
-
-        return response()->noContent();
-    }
 }

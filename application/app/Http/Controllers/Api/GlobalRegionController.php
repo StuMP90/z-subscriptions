@@ -41,10 +41,4 @@ class GlobalRegionController extends Controller
         return response()->json($globalRegion);
     }
 
-    public function destroy(GlobalRegion $globalRegion)
-    {
-        $globalRegion->delete();
-
-        return response()->noContent();
-    }
 }

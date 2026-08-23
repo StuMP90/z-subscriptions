@@ -28,17 +28,17 @@ Route::get('/', function () {
 Route::middleware(['web', 'auth'])
     ->withoutMiddleware([VerifyCsrfToken::class])
     ->group(function () {
-        Route::apiResource('users', UserController::class);
-        Route::apiResource('customers', CustomerController::class);
-        Route::apiResource('products', ProductController::class);
-        Route::apiResource('shops', ShopController::class);
-        Route::apiResource('publications', PublicationController::class);
-        Route::apiResource('publication-frequencies', PublicationFrequencyController::class);
-        Route::apiResource('issues', IssueController::class);
-        Route::apiResource('settings', SettingController::class);
-        Route::apiResource('global-regions', GlobalRegionController::class);
-        Route::apiResource('countries', CountryController::class);
-        Route::apiResource('county-states', CountyStateController::class);
+        Route::apiResource('users', UserController::class)->except('destroy');
+        Route::apiResource('customers', CustomerController::class)->except('destroy');
+        Route::apiResource('products', ProductController::class)->except('destroy');
+        Route::apiResource('shops', ShopController::class)->except('destroy');
+        Route::apiResource('publications', PublicationController::class)->except('destroy');
+        Route::apiResource('publication-frequencies', PublicationFrequencyController::class)->except('destroy');
+        Route::apiResource('issues', IssueController::class)->except('destroy');
+        Route::apiResource('settings', SettingController::class)->except('destroy');
+        Route::apiResource('global-regions', GlobalRegionController::class)->except('destroy');
+        Route::apiResource('countries', CountryController::class)->except('destroy');
+        Route::apiResource('county-states', CountyStateController::class)->except('destroy');
 
         Route::get('/currencies', function () {
             return Currency::all();
@@ -80,6 +80,6 @@ Route::middleware(['web', 'auth'])
             ]);
         });
 
-        Route::apiResource('offers', OfferController::class);
-        Route::apiResource('orders', OrderController::class);
+        Route::apiResource('offers', OfferController::class)->except('destroy');
+        Route::apiResource('orders', OrderController::class)->except('destroy');
     });

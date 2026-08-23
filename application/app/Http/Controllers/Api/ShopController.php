@@ -51,10 +51,4 @@ class ShopController extends Controller
         return response()->json($shop);
     }
 
-    public function destroy(Shop $shop)
-    {
-        $shop->delete();
-
-        return response()->noContent();
-    }
 }

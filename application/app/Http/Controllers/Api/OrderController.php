@@ -59,10 +59,4 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    public function destroy(Order $order)
-    {
-        $order->delete();
-
-        return response()->noContent();
-    }
 }

@@ -62,17 +62,6 @@ const startAdd = () => { editing.value = { is_active: true, is_available_on_web:
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(currentPage.value); };
-
-const remove = async (item) => {
-    if (! confirm('Delete this publication?')) return;
-    await fetch(`${endpoint}/${item.id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' },
-    });
-    await fetchItems(currentPage.value);
-};
-
 onMounted(() => {
     fetchItems(1);
     fetchRegions();
@@ -130,7 +119,6 @@ onMounted(() => {
                     <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>
-                        <button @click="remove(item)" class="text-red-600 hover:underline">Delete</button>
                     </td>
                 </tr>
             </tbody>

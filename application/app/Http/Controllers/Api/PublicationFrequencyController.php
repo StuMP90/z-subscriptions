@@ -45,10 +45,4 @@ class PublicationFrequencyController extends Controller
         return response()->json($publicationFrequency);
     }
 
-    public function destroy(PublicationFrequency $publicationFrequency)
-    {
-        $publicationFrequency->delete();
-
-        return response()->noContent();
-    }
 }

@@ -47,10 +47,4 @@ class CountryController extends Controller
         return response()->json($country);
     }
 
-    public function destroy(Country $country)
-    {
-        $country->delete();
-
-        return response()->noContent();
-    }
 }

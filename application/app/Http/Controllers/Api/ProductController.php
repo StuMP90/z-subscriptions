@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Product::with('productType')->get();
+        return Product::with('productType')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

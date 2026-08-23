@@ -10,7 +10,7 @@ class ShopController extends Controller
 {
     public function index()
     {
-        return Shop::with('defaultCurrency')->get();
+        return Shop::with('defaultCurrency')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

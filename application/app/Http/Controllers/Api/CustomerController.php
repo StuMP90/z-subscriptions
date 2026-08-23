@@ -10,7 +10,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        return Customer::with('shop')->get();
+        return Customer::with('shop')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

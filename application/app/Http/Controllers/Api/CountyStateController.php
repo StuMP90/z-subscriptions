@@ -10,7 +10,7 @@ class CountyStateController extends Controller
 {
     public function index()
     {
-        return CountyState::with('country')->orderBy('name')->get();
+        return CountyState::with('country')->orderBy('name')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

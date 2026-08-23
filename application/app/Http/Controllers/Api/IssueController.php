@@ -10,7 +10,7 @@ class IssueController extends Controller
 {
     public function index()
     {
-        return Issue::with('publication')->get();
+        return Issue::with('publication')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

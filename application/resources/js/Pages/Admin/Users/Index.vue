@@ -2,8 +2,11 @@
 import { ref, onMounted } from 'vue';
 import AdminLayout from '../../../Layouts/AdminLayout.vue';
 import CrudForm from '../../../Components/CrudForm.vue';
+import Pagination from '../../../Components/Pagination.vue';
 
 const items = ref([]);
+const currentPage = ref(1);
+const lastPage = ref(1);
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/users';
@@ -17,18 +20,24 @@ const fields = [
     { name: 'is_active', label: 'Active', type: 'checkbox' },
 ];
 
-const fetchItems = async () => {
-    const res = await fetch(endpoint, {
+const fetchItems = async (page = 1) => {
+    currentPage.value = page;
+    const res = await fetch(`${endpoint}?page=${page}`, {
         credentials: 'include',
         headers: { 'Accept': 'application/json' },
     });
-    items.value = await res.json();
+    const data = await res.json();
+    items.value = data.data;
+    currentPage.value = data.current_page;
+    lastPage.value = data.last_page;
 };
+
+const goToPage = (page) => fetchItems(page);
 
 const startAdd = () => { editing.value = { is_active: true }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
-const saved = () => { editing.value = null; fetchItems(); };
+const saved = () => { editing.value = null; fetchItems(currentPage.value); };
 
 const remove = async (item) => {
     if (! confirm('Delete this user?')) return;
@@ -37,10 +46,10 @@ const remove = async (item) => {
         credentials: 'include',
         headers: { 'Accept': 'application/json' },
     });
-    await fetchItems();
+    await fetchItems(currentPage.value);
 };
 
-onMounted(fetchItems);
+onMounted(() => fetchItems(1));
 </script>
 
 <template>
@@ -88,5 +97,7 @@ onMounted(fetchItems);
                 </tr>
             </tbody>
         </table>
+
+        <Pagination :currentPage="currentPage" :lastPage="lastPage" @page-change="goToPage" />
     </AdminLayout>
 </template>

@@ -11,7 +11,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        return Setting::with('shop')->orderBy('group')->orderBy('key')->get();
+        return Setting::with('shop')->orderBy('group')->orderBy('key')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)
@@ -19,7 +19,7 @@ class SettingController extends Controller
         $validated = $request->validate([
             'shop_id' => 'nullable|integer|exists:shops,id',
             'group' => 'required|string|max:50',
-            'key' => 'required|string|max:255',
+            'key' => 'required|string|max:255|unique:settings,key',
             'value' => [
                 'nullable',
                 Rule::when($request->input('type') === 'integer', 'integer'),
@@ -38,7 +38,7 @@ class SettingController extends Controller
         $validated = $request->validate([
             'shop_id' => 'nullable|integer|exists:shops,id',
             'group' => 'required|string|max:50',
-            'key' => 'required|string|max:255',
+            'key' => 'required|string|max:255|unique:settings,key,'.$setting->id,
             'value' => [
                 'nullable',
                 Rule::when($request->input('type') === 'integer', 'integer'),

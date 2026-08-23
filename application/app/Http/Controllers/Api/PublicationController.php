@@ -10,7 +10,7 @@ class PublicationController extends Controller
 {
     public function index()
     {
-        return Publication::all();
+        return Publication::paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

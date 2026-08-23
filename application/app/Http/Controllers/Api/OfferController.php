@@ -10,7 +10,7 @@ class OfferController extends Controller
 {
     public function index()
     {
-        return Offer::with(['product', 'currency', 'frequency'])->get();
+        return Offer::with(['product', 'currency', 'frequency'])->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

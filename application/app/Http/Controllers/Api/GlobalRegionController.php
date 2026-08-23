@@ -10,7 +10,7 @@ class GlobalRegionController extends Controller
 {
     public function index()
     {
-        return GlobalRegion::orderBy('name')->get();
+        return GlobalRegion::orderBy('name')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

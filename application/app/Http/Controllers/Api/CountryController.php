@@ -10,7 +10,7 @@ class CountryController extends Controller
 {
     public function index()
     {
-        return Country::with('globalRegion')->orderBy('name')->get();
+        return Country::with('globalRegion')->orderBy('name')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

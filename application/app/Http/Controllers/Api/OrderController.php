@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        return Order::with(['customer', 'shop'])->get();
+        return Order::with(['customer', 'shop'])->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

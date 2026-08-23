@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return User::with('shop')->get();
+        return User::with('shop')->paginate($this->adminPageSize());
     }
 
     public function store(Request $request)

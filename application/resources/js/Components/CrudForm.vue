@@ -14,6 +14,7 @@ const saving = ref(false);
 const error = ref(null);
 const selectOptions = ref({});
 const defaults = ref({});
+const generatedSlug = ref('');
 
 const getOptions = (field) => {
     if (field.options) return field.options;
@@ -31,6 +32,14 @@ const normalise = (value) => {
 };
 
 const isEmpty = (v) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0);
+
+const slugify = (value) => {
+    return String(value)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+};
 
 const applyDefaults = (value) => {
     if (value.id) return value;
@@ -56,7 +65,17 @@ const fetchDefaults = async () => {
 
 watch(() => props.modelValue, (value) => {
     local.value = applyDefaults(normalise(value));
+    generatedSlug.value = local.value.slug || '';
 }, { deep: true });
+
+watch(() => local.value?.name, (name) => {
+    if (! name || local.value?.id) return;
+    const newSlug = slugify(name);
+    if (isEmpty(local.value?.slug) || local.value.slug === generatedSlug.value) {
+        local.value.slug = newSlug;
+        generatedSlug.value = newSlug;
+    }
+});
 
 onMounted(async () => {
     local.value = applyDefaults(normalise(local.value));
@@ -68,7 +87,8 @@ onMounted(async () => {
                     credentials: 'include',
                     headers: { 'Accept': 'application/json' },
                 });
-                const data = await res.json();
+                const json = await res.json();
+                const data = Array.isArray(json) ? json : (json.data || []);
                 const valueKey = field.valueKey || 'id';
                 const labelKey = field.labelKey || 'name';
                 selectOptions.value[field.name] = data.map(item => ({

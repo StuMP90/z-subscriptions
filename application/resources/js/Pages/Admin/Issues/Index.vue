@@ -13,6 +13,21 @@ const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/issues';
 const { formatDate } = useDateFormat();
+const regions = ref([]);
+
+const fetchRegions = async () => {
+    const res = await fetch('https://api.zsubscriptions.local/global-regions?per_page=1000', {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' },
+    });
+    const data = await res.json();
+    regions.value = Array.isArray(data) ? data : (data.data || []);
+};
+
+const regionCodes = (ids) => {
+    if (! ids || ! ids.length) return '—';
+    return ids.map(id => regions.value.find(r => String(r.id) === String(id))?.code ?? id).join(', ') || '—';
+};
 
 const fields = [
     { name: 'publication_id', label: 'Publication', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publications' },
@@ -46,7 +61,7 @@ const startAdd = () => { editing.value = { is_active: true, is_available_on_web:
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(currentPage.value); };
-onMounted(() => fetchItems(1));
+onMounted(() => { fetchItems(1); fetchRegions(); });
 </script>
 
 <template>
@@ -85,6 +100,7 @@ onMounted(() => fetchItems(1));
                     <th class="p-3 text-left">Name</th>
                     <th class="p-3 text-left">Issue #</th>
                     <th class="p-3 text-left">Date</th>
+                    <th class="p-3 text-left">Regions</th>
                     <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Web</th>
                     <th class="p-3 text-left">Actions</th>
@@ -96,6 +112,7 @@ onMounted(() => fetchItems(1));
                     <td class="p-3">{{ item.name }}</td>
                     <td class="p-3">{{ item.issue_number }}</td>
                     <td class="p-3">{{ formatDate(item.publication_date) }}</td>
+                    <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">

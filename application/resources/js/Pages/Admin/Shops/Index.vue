@@ -40,7 +40,7 @@ const goToPage = (page) => fetchItems(page);
 const handleSearch = () => { currentPage.value = 1; fetchItems(1); };
 
 const fetchRegions = async () => {
-    const res = await fetch('https://api.zsubscriptions.local/global-regions', {
+    const res = await fetch('https://api.zsubscriptions.local/global-regions?per_page=1000', {
         credentials: 'include',
         headers: { 'Accept': 'application/json' },
     });
@@ -50,7 +50,7 @@ const fetchRegions = async () => {
 
 const globalRegionCodes = (ids) => {
     if (! Array.isArray(ids)) return '';
-    return ids.map(id => regions.value.find(r => r.id === id)?.code ?? id).join(', ');
+    return ids.map(id => regions.value.find(r => String(r.id) === String(id))?.code ?? id).join(', ');
 };
 
 const startAdd = () => { editing.value = { is_active: true, global_region_ids: [] }; };

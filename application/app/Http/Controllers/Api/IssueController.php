@@ -24,6 +24,8 @@ class IssueController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
 
         $issue = Issue::create($validated);
@@ -42,6 +44,8 @@ class IssueController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
 
         $issue->fill($validated);

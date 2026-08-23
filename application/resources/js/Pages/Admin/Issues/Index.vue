@@ -9,14 +9,15 @@ const editing = ref(null);
 const endpoint = 'https://api.zsubscriptions.local/issues';
 
 const fields = [
-    { name: 'publication_id', label: 'Publication ID', type: 'number' },
+    { name: 'publication_id', label: 'Publication', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/publications' },
     { name: 'name', label: 'Name', type: 'text' },
     { name: 'slug', label: 'Slug', type: 'text' },
     { name: 'issue_number', label: 'Issue Number', type: 'number' },
     { name: 'publication_date', label: 'Publication Date', type: 'date' },
-    { name: 'description', label: 'Description', type: 'text' },
+    { name: 'description', label: 'Description', type: 'textarea' },
     { name: 'is_active', label: 'Active', type: 'checkbox' },
     { name: 'is_available_on_web', label: 'Available on Web', type: 'checkbox' },
+    { name: 'global_region_ids', label: 'Availability Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
 ];
 
 const fetchItems = async () => {
@@ -27,7 +28,7 @@ const fetchItems = async () => {
     items.value = await res.json();
 };
 
-const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true }; };
+const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true, global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(); };

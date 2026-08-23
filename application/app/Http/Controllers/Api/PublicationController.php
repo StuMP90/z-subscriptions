@@ -22,6 +22,8 @@ class PublicationController extends Controller
             'image' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
 
         $publication = Publication::create($validated);
@@ -38,6 +40,8 @@ class PublicationController extends Controller
             'image' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
 
         $publication->fill($validated);

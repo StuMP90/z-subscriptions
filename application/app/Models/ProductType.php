@@ -5,21 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Issue extends Model
+class ProductType extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
     protected $casts = [
-        'publication_date' => 'date',
         'is_active' => 'boolean',
-        'is_available_on_web' => 'boolean',
-        'global_region_ids' => 'array',
     ];
 
-    public function publication()
+    public function products()
     {
-        return $this->belongsTo(Publication::class);
+        return $this->hasMany(Product::class, 'product_type_id');
     }
 }

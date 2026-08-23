@@ -17,13 +17,23 @@ class OfferController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|integer|exists:products,id',
+            'product_variant_id' => 'nullable|integer|exists:product_variants,id',
             'shop_id' => 'required|integer|exists:shops,id',
             'currency_id' => 'required|integer|exists:currencies,id',
             'frequency_id' => 'required|integer|exists:subscription_frequencies,id',
             'base_price' => 'required|numeric',
             'price' => 'required|numeric',
+            'valid_from' => 'nullable|date',
+            'valid_to' => 'nullable|date',
+            'is_setup_offer' => 'boolean',
+            'setup_config' => 'nullable|string',
             'is_active' => 'boolean',
+            'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
+
+        $validated['setup_config'] = $validated['setup_config'] ? json_decode($validated['setup_config'], true) : null;
 
         $offer = Offer::create($validated);
 
@@ -34,13 +44,23 @@ class OfferController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|integer|exists:products,id',
+            'product_variant_id' => 'nullable|integer|exists:product_variants,id',
             'shop_id' => 'required|integer|exists:shops,id',
             'currency_id' => 'required|integer|exists:currencies,id',
             'frequency_id' => 'required|integer|exists:subscription_frequencies,id',
             'base_price' => 'required|numeric',
             'price' => 'required|numeric',
+            'valid_from' => 'nullable|date',
+            'valid_to' => 'nullable|date',
+            'is_setup_offer' => 'boolean',
+            'setup_config' => 'nullable|string',
             'is_active' => 'boolean',
+            'is_available_on_web' => 'boolean',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
         ]);
+
+        $validated['setup_config'] = $validated['setup_config'] ? json_decode($validated['setup_config'], true) : null;
 
         $offer->fill($validated);
         $offer->save();

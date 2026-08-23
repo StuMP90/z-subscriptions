@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        return User::with('shop')->get();
     }
 
     public function store(Request $request)
@@ -20,6 +20,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'role' => 'required|string|max:50',
+            'shop_id' => 'nullable|integer|exists:shops,id',
             'is_active' => 'boolean',
         ]);
 
@@ -35,6 +36,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|string|max:50',
+            'shop_id' => 'nullable|integer|exists:shops,id',
             'is_active' => 'boolean',
         ]);
 

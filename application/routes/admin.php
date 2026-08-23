@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PublicationController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,4 +28,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('issues', IssueController::class)->only(['index']);
     Route::resource('customers', CustomerController::class)->only(['index']);
     Route::resource('orders', OrderController::class)->only(['index']);
+    Route::resource('settings', SettingController::class)->only(['index']);
 });

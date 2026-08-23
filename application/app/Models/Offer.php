@@ -11,6 +11,18 @@ class Offer extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_setup_offer' => 'boolean',
+        'is_available_on_web' => 'boolean',
+        'base_price' => 'decimal:2',
+        'price' => 'decimal:2',
+        'valid_from' => 'date',
+        'valid_to' => 'date',
+        'setup_config' => 'array',
+        'global_region_ids' => 'array',
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

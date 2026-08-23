@@ -9,6 +9,7 @@ const editing = ref(null);
 const endpoint = 'https://api.zsubscriptions.local/customers';
 
 const fields = [
+    { name: 'shop_id', label: 'Shop', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/shops', nullable: true },
     { name: 'first_name', label: 'First Name', type: 'text' },
     { name: 'last_name', label: 'Last Name', type: 'text' },
     { name: 'email', label: 'Email', type: 'email' },
@@ -77,7 +78,7 @@ onMounted(fetchItems);
                 <tr v-for="item in items" :key="item.id" class="border-b">
                     <td class="p-3">{{ item.first_name }} {{ item.last_name }}</td>
                     <td class="p-3">{{ item.email }}</td>
-                    <td class="p-3">{{ item.shop_id }}</td>
+                    <td class="p-3">{{ item.shop?.name }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>

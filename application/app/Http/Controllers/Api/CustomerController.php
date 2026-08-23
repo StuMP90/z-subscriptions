@@ -10,12 +10,13 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        return Customer::all();
+        return Customer::with('shop')->get();
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'shop_id' => 'nullable|integer|exists:shops,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email',
@@ -32,6 +33,7 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $validated = $request->validate([
+            'shop_id' => 'nullable|integer|exists:shops,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email,'.$customer->id,

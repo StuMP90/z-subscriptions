@@ -12,7 +12,9 @@ class Publication extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'is_active' => 'boolean',
         'is_available_on_web' => 'boolean',
+        'global_region_ids' => 'array',
     ];
 
     public function regions()

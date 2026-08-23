@@ -20,9 +20,14 @@ class OrderController extends Controller
             'shop_id' => 'required|integer|exists:shops,id',
             'currency_id' => 'required|integer|exists:currencies,id',
             'order_number' => 'required|string|unique:orders,order_number',
+            'source' => 'nullable|string|max:50',
             'status' => 'required|string|max:50',
+            'subtotal' => 'numeric',
+            'tax' => 'numeric',
+            'shipping' => 'numeric',
             'total' => 'required|numeric',
-            'is_active' => 'boolean',
+            'notes' => 'nullable|string',
+            'placed_at' => 'nullable|date',
         ]);
 
         $order = Order::create($validated);
@@ -37,9 +42,14 @@ class OrderController extends Controller
             'shop_id' => 'required|integer|exists:shops,id',
             'currency_id' => 'required|integer|exists:currencies,id',
             'order_number' => 'required|string|unique:orders,order_number,'.$order->id,
+            'source' => 'nullable|string|max:50',
             'status' => 'required|string|max:50',
+            'subtotal' => 'numeric',
+            'tax' => 'numeric',
+            'shipping' => 'numeric',
             'total' => 'required|numeric',
-            'is_active' => 'boolean',
+            'notes' => 'nullable|string',
+            'placed_at' => 'nullable|date',
         ]);
 
         $order->fill($validated);

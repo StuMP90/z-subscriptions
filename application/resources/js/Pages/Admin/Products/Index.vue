@@ -9,10 +9,21 @@ const editing = ref(null);
 const endpoint = 'https://api.zsubscriptions.local/products';
 
 const fields = [
+    { name: 'sku', label: 'SKU', type: 'text' },
     { name: 'name', label: 'Name', type: 'text' },
     { name: 'slug', label: 'Slug', type: 'text' },
-    { name: 'sku', label: 'SKU', type: 'text' },
+    { name: 'description', label: 'Description', type: 'textarea' },
+    { name: 'product_type_id', label: 'Product Type', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/product-types' },
+    { name: 'is_physical', label: 'Physical', type: 'checkbox' },
+    { name: 'is_digital', label: 'Digital', type: 'checkbox' },
+    { name: 'has_variants', label: 'Has Variants', type: 'checkbox' },
+    { name: 'track_stock', label: 'Track Stock', type: 'checkbox' },
+    { name: 'stock_quantity', label: 'Stock', type: 'number' },
+    { name: 'allow_backorders', label: 'Allow Backorders', type: 'checkbox' },
+    { name: 'download_url', label: 'Download URL', type: 'text' },
+    { name: 'status', label: 'Status', type: 'text' },
     { name: 'is_available_on_web', label: 'Available on Web', type: 'checkbox' },
+    { name: 'global_region_ids', label: 'Availability Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
 ];
 
 const fetchItems = async () => {
@@ -23,7 +34,7 @@ const fetchItems = async () => {
     items.value = await res.json();
 };
 
-const startAdd = () => { editing.value = { is_available_on_web: true }; };
+const startAdd = () => { editing.value = { product_type_id: '', status: 'active', stock_quantity: 0, is_available_on_web: true, global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(); };
@@ -64,18 +75,22 @@ onMounted(fetchItems);
         <table class="w-full bg-white rounded shadow">
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="p-3 text-left">Name</th>
-                    <th class="p-3 text-left">Slug</th>
                     <th class="p-3 text-left">SKU</th>
+                    <th class="p-3 text-left">Name</th>
+                    <th class="p-3 text-left">Product Type</th>
+                    <th class="p-3 text-left">Stock</th>
+                    <th class="p-3 text-left">Status</th>
                     <th class="p-3 text-left">Web</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="item in items" :key="item.id" class="border-b">
-                    <td class="p-3">{{ item.name }}</td>
-                    <td class="p-3">{{ item.slug }}</td>
                     <td class="p-3">{{ item.sku }}</td>
+                    <td class="p-3">{{ item.name }}</td>
+                    <td class="p-3">{{ item.product_type?.name }}</td>
+                    <td class="p-3">{{ item.stock_quantity }}</td>
+                    <td class="p-3">{{ item.status }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>

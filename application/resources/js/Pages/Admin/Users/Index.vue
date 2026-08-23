@@ -13,6 +13,7 @@ const fields = [
     { name: 'email', label: 'Email', type: 'email' },
     { name: 'password', label: 'Password', type: 'password' },
     { name: 'role', label: 'Role', type: 'text' },
+    { name: 'shop_id', label: 'Shop', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/shops', nullable: true },
     { name: 'is_active', label: 'Active', type: 'checkbox' },
 ];
 
@@ -68,6 +69,7 @@ onMounted(fetchItems);
                     <th class="p-3 text-left">Name</th>
                     <th class="p-3 text-left">Email</th>
                     <th class="p-3 text-left">Role</th>
+                    <th class="p-3 text-left">Shop</th>
                     <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
@@ -77,6 +79,7 @@ onMounted(fetchItems);
                     <td class="p-3">{{ item.name }}</td>
                     <td class="p-3">{{ item.email }}</td>
                     <td class="p-3">{{ item.role }}</td>
+                    <td class="p-3">{{ item.shop?.name }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>

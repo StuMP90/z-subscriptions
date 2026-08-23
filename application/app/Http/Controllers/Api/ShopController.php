@@ -10,7 +10,7 @@ class ShopController extends Controller
 {
     public function index()
     {
-        return Shop::with(['defaultCurrency', 'globalRegion'])->get();
+        return Shop::with('defaultCurrency')->get();
     }
 
     public function store(Request $request)
@@ -20,7 +20,9 @@ class ShopController extends Controller
             'slug' => 'required|string|max:255|unique:shops,slug',
             'domain' => 'required|string|max:255|unique:shops,domain',
             'default_currency_id' => 'required|integer|exists:currencies,id',
-            'global_region_id' => 'nullable|integer|exists:global_regions,id',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
+            'theme' => 'nullable|string|max:50',
             'is_active' => 'boolean',
         ]);
 
@@ -36,7 +38,9 @@ class ShopController extends Controller
             'slug' => 'required|string|max:255|unique:shops,slug,'.$shop->id,
             'domain' => 'required|string|max:255|unique:shops,domain,'.$shop->id,
             'default_currency_id' => 'required|integer|exists:currencies,id',
-            'global_region_id' => 'nullable|integer|exists:global_regions,id',
+            'global_region_ids' => 'nullable|array',
+            'global_region_ids.*' => 'integer',
+            'theme' => 'nullable|string|max:50',
             'is_active' => 'boolean',
         ]);
 

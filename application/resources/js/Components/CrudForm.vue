@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
 const props = defineProps({
     endpoint: { type: String, required: true },
@@ -12,10 +12,82 @@ const emit = defineEmits(['saved', 'cancelled']);
 const local = ref({ ...props.modelValue });
 const saving = ref(false);
 const error = ref(null);
+const selectOptions = ref({});
+const defaults = ref({});
+
+const getOptions = (field) => {
+    if (field.options) return field.options;
+    return selectOptions.value[field.name] || [];
+};
+
+const normalise = (value) => {
+    const clone = { ...value };
+    for (const field of props.fields) {
+        if (field.type === 'multiselect') {
+            clone[field.name] = Array.isArray(clone[field.name]) ? clone[field.name] : [];
+        }
+    }
+    return clone;
+};
+
+const isEmpty = (v) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0);
+
+const applyDefaults = (value) => {
+    if (value.id) return value;
+    for (const [key, defaultValue] of Object.entries(defaults.value)) {
+        if (isEmpty(value[key])) {
+            value[key] = defaultValue;
+        }
+    }
+    return value;
+};
+
+const fetchDefaults = async () => {
+    try {
+        const res = await fetch('https://api.zsubscriptions.local/defaults', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' },
+        });
+        defaults.value = await res.json();
+    } catch (e) {
+        defaults.value = {};
+    }
+};
 
 watch(() => props.modelValue, (value) => {
-    local.value = { ...value };
+    local.value = applyDefaults(normalise(value));
 }, { deep: true });
+
+onMounted(async () => {
+    local.value = applyDefaults(normalise(local.value));
+
+    for (const field of props.fields) {
+        if ((field.type === 'select' || field.type === 'multiselect') && field.optionsUrl) {
+            try {
+                const res = await fetch(field.optionsUrl, {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' },
+                });
+                const data = await res.json();
+                const valueKey = field.valueKey || 'id';
+                const labelKey = field.labelKey || 'name';
+                selectOptions.value[field.name] = data.map(item => ({
+                    value: item[valueKey],
+                    label: item[labelKey],
+                }));
+            } catch (e) {
+                selectOptions.value[field.name] = [];
+            }
+        }
+    }
+
+    await fetchDefaults();
+    local.value = applyDefaults(local.value);
+});
+
+const token = typeof document !== 'undefined'
+    ? document.querySelector('meta[name="csrf-token"]')?.content
+    : null;
 
 const save = async () => {
     saving.value = true;
@@ -31,6 +103,7 @@ const save = async () => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                ...(token ? { 'X-CSRF-TOKEN': token } : {}),
             },
             body: JSON.stringify(local.value),
         });
@@ -73,10 +146,28 @@ const cancel = () => {
                 v-model="local[field.name]"
                 class="border p-2 w-full rounded"
             >
-                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
+                <option v-if="field.nullable" value="">-- None --</option>
+                <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
                     {{ opt.label }}
                 </option>
             </select>
+            <select
+                v-else-if="field.type === 'multiselect'"
+                v-model="local[field.name]"
+                multiple
+                class="border p-2 w-full rounded"
+                size="6"
+            >
+                <option v-for="opt in getOptions(field)" :key="opt.value" :value="opt.value">
+                    {{ opt.label }}
+                </option>
+            </select>
+            <textarea
+                v-else-if="field.type === 'textarea'"
+                v-model="local[field.name]"
+                class="border p-2 w-full rounded"
+                rows="4"
+            ></textarea>
             <input
                 v-else
                 v-model="local[field.name]"

@@ -11,14 +11,14 @@ class Shop extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+        'global_region_ids' => 'array',
+    ];
+
     public function defaultCurrency()
     {
         return $this->belongsTo(Currency::class, 'default_currency_id');
-    }
-
-    public function globalRegion()
-    {
-        return $this->belongsTo(GlobalRegion::class, 'global_region_id');
     }
 
     public function domains()

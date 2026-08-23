@@ -12,7 +12,6 @@ class Customer extends Authenticatable
 
     protected $fillable = [
         'shop_id',
-        'global_region_id',
         'first_name',
         'last_name',
         'email',
@@ -33,5 +32,10 @@ class Customer extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
     }
 }

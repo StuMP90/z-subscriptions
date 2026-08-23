@@ -4,6 +4,7 @@ import AdminLayout from '../../../Layouts/AdminLayout.vue';
 import CrudForm from '../../../Components/CrudForm.vue';
 
 const items = ref([]);
+const regions = ref([]);
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/shops';
@@ -12,8 +13,9 @@ const fields = [
     { name: 'name', label: 'Name', type: 'text' },
     { name: 'slug', label: 'Slug', type: 'text' },
     { name: 'domain', label: 'Domain', type: 'text' },
-    { name: 'default_currency_id', label: 'Currency ID', type: 'number' },
-    { name: 'global_region_id', label: 'Region ID', type: 'number' },
+    { name: 'default_currency_id', label: 'Currency', type: 'select', optionsUrl: 'https://api.zsubscriptions.local/currencies', labelKey: 'code' },
+    { name: 'global_region_ids', label: 'Regions', type: 'multiselect', optionsUrl: 'https://api.zsubscriptions.local/global-regions' },
+    { name: 'theme', label: 'Theme', type: 'text' },
     { name: 'is_active', label: 'Active', type: 'checkbox' },
 ];
 
@@ -25,7 +27,20 @@ const fetchItems = async () => {
     items.value = await res.json();
 };
 
-const startAdd = () => { editing.value = { is_active: true }; };
+const fetchRegions = async () => {
+    const res = await fetch('https://api.zsubscriptions.local/global-regions', {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' },
+    });
+    regions.value = await res.json();
+};
+
+const globalRegionCodes = (ids) => {
+    if (! Array.isArray(ids)) return '';
+    return ids.map(id => regions.value.find(r => r.id === id)?.code ?? id).join(', ');
+};
+
+const startAdd = () => { editing.value = { is_active: true, global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(); };
@@ -40,7 +55,7 @@ const remove = async (item) => {
     await fetchItems();
 };
 
-onMounted(fetchItems);
+onMounted(() => { fetchItems(); fetchRegions(); });
 </script>
 
 <template>
@@ -68,8 +83,9 @@ onMounted(fetchItems);
                 <tr>
                     <th class="p-3 text-left">Name</th>
                     <th class="p-3 text-left">Domain</th>
-                    <th class="p-3 text-left">Region</th>
+                    <th class="p-3 text-left">Regions</th>
                     <th class="p-3 text-left">Currency</th>
+                    <th class="p-3 text-left">Theme</th>
                     <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
@@ -78,8 +94,9 @@ onMounted(fetchItems);
                 <tr v-for="item in items" :key="item.id" class="border-b">
                     <td class="p-3">{{ item.name }}</td>
                     <td class="p-3">{{ item.domain }}</td>
-                    <td class="p-3">{{ item.global_region?.name }}</td>
+                    <td class="p-3">{{ globalRegionCodes(item.global_region_ids) }}</td>
                     <td class="p-3">{{ item.default_currency?.code }}</td>
+                    <td class="p-3">{{ item.theme }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>

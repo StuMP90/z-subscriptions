@@ -13,6 +13,6 @@ abstract class Controller
             return min($perPage, 1000);
         }
 
-        return (int) (Setting::where('key', 'Default Admin List Page Size')->value('value') ?? 25);
+        return (int) (Setting::getValue('Default Admin List Page Size', 25));
     }
 }

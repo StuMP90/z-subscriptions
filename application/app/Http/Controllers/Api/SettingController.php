@@ -26,10 +26,12 @@ class SettingController extends Controller
                 Rule::when($request->input('type') === 'integer', 'integer'),
                 Rule::when($request->input('type') === 'boolean', 'boolean'),
             ],
+            'cache_seconds' => 'nullable|integer|min:0',
             'type' => 'required|string|max:20|in:string,integer,boolean',
         ]);
 
         $setting = Setting::create($validated);
+        Setting::clearCache($setting->key, $setting->shop_id, $setting->group);
 
         return response()->json($setting, 201);
     }
@@ -45,11 +47,26 @@ class SettingController extends Controller
                 Rule::when($request->input('type') === 'integer', 'integer'),
                 Rule::when($request->input('type') === 'boolean', 'boolean'),
             ],
+            'cache_seconds' => 'nullable|integer|min:0',
             'type' => 'required|string|max:20|in:string,integer,boolean',
         ]);
 
+        $originalKey = $setting->getOriginal('key');
+        $originalShopId = $setting->getOriginal('shop_id');
+        $originalGroup = $setting->getOriginal('group');
+
         $setting->fill($validated);
         $setting->save();
+
+        if ($originalKey !== $setting->key || $originalShopId != $setting->shop_id || $originalGroup !== $setting->group) {
+            Setting::clearCache($originalKey, (int) $originalShopId, $originalGroup);
+        }
+
+        Setting::clearCache($setting->key, $setting->shop_id, $setting->group);
+
+        if ($setting->key === 'Default Setting Cache Time') {
+            Setting::flushDefaultCacheTtl();
+        }
 
         return response()->json($setting);
     }

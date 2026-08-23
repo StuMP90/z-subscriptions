@@ -22,6 +22,7 @@ const fields = [
         { value: 'integer', label: 'Integer' },
         { value: 'boolean', label: 'Boolean' },
     ]},
+    { name: 'cache_seconds', label: 'Cache Seconds', type: 'number' },
 ];
 
 const fetchItems = async (page = 1) => {
@@ -40,7 +41,7 @@ const goToPage = (page) => fetchItems(page);
 
 const handleSearch = () => { currentPage.value = 1; fetchItems(1); };
 
-const startAdd = () => { editing.value = { shop_id: '', group: 'general', key: '', value: '', type: 'string' }; };
+const startAdd = () => { editing.value = { shop_id: '', group: 'general', key: '', value: '', type: 'string', cache_seconds: '' }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
 const saved = () => { editing.value = null; fetchItems(currentPage.value); };
@@ -84,6 +85,7 @@ onMounted(() => fetchItems(1));
                     <th class="p-3 text-left">Key</th>
                     <th class="p-3 text-left">Value</th>
                     <th class="p-3 text-left">Type</th>
+                    <th class="p-3 text-left">Cache (s)</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
             </thead>
@@ -94,6 +96,7 @@ onMounted(() => fetchItems(1));
                     <td class="p-3">{{ item.key }}</td>
                     <td class="p-3">{{ item.value }}</td>
                     <td class="p-3">{{ item.type }}</td>
+                    <td class="p-3">{{ item.cache_seconds ?? '—' }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>
                     </td>

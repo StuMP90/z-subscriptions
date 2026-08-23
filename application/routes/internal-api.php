@@ -17,6 +17,7 @@ use App\Models\Currency;
 use App\Models\GlobalRegion;
 use App\Models\ProductType;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -50,26 +51,13 @@ Route::middleware(['web', 'auth'])
             return ProductType::all();
         });
         Route::get('/defaults', function () {
-            $productTypeId = (int) (DB::table('settings')
-                ->where('shop_id', null)
-                ->where('group', 'general')
-                ->where('key', 'Default Product Type')
-                ->value('value') ?? 1);
-
-            $regionId = (int) (DB::table('settings')
-                ->where('shop_id', null)
-                ->where('group', 'general')
-                ->where('key', 'Default Availability Region')
-                ->value('value') ?? 5);
+            $productTypeId = (int) (Setting::getValue('Default Product Type', 1));
+            $regionId = (int) (Setting::getValue('Default Availability Region', 5));
 
             $currency = Currency::where('is_base_currency', true)->first() ?? Currency::first();
             $currencyId = $currency?->id;
 
-            $dateFormat = DB::table('settings')
-                ->where('shop_id', null)
-                ->where('group', 'general')
-                ->where('key', 'Default Date Display Format')
-                ->value('value') ?? 'd/m/Y';
+            $dateFormat = Setting::getValue('Default Date Display Format', 'd/m/Y');
 
             return response()->json([
                 'product_type_id' => $productTypeId,

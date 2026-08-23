@@ -63,9 +63,11 @@ class SettingController extends Controller
         }
 
         Setting::clearCache($setting->key, $setting->shop_id, $setting->group);
+        Setting::getValue($setting->key, null, $setting->shop_id, $setting->group);
 
         if ($setting->key === 'Default Setting Cache Time') {
             Setting::flushDefaultCacheTtl();
+            Setting::defaultCacheTtl();
         }
 
         return response()->json($setting);

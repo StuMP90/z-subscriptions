@@ -30,6 +30,7 @@ const menu = [
         label: 'System',
         items: [
             { label: 'Settings', href: '/settings' },
+            { label: 'Cache Control', href: '/cache-control' },
             { label: 'Shops', href: '/shops' },
             { label: 'Regions', href: '/global-regions' },
             { label: 'Countries', href: '/countries' },

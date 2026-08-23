@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\CacheController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CountyStateController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -35,4 +36,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('global-regions', GlobalRegionController::class)->only(['index']);
     Route::resource('countries', CountryController::class)->only(['index']);
     Route::resource('county-states', CountyStateController::class)->only(['index']);
+    Route::get('/cache-control', [CacheController::class, 'index'])->name('admin.cache.index');
 });

@@ -7,6 +7,7 @@ import Pagination from '../../../Components/Pagination.vue';
 const items = ref([]);
 const currentPage = ref(1);
 const lastPage = ref(1);
+const regions = ref([]);
 const editing = ref(null);
 
 const endpoint = 'https://api.zsubscriptions.local/publications';
@@ -35,6 +36,23 @@ const fetchItems = async (page = 1) => {
 
 const goToPage = (page) => fetchItems(page);
 
+const fetchRegions = async () => {
+    const res = await fetch('https://api.zsubscriptions.local/global-regions', {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' },
+    });
+    const data = await res.json();
+    regions.value = Array.isArray(data) ? data : (data.data || []);
+};
+
+const regionCodes = (ids) => {
+    if (! ids || ! ids.length) return '—';
+    return regions.value
+        .filter(region => ids.includes(region.id))
+        .map(region => region.code)
+        .join(', ') || '—';
+};
+
 const startAdd = () => { editing.value = { is_active: true, is_available_on_web: true, global_region_ids: [] }; };
 const startEdit = (item) => { editing.value = { ...item }; };
 const cancel = () => { editing.value = null; };
@@ -50,7 +68,10 @@ const remove = async (item) => {
     await fetchItems(currentPage.value);
 };
 
-onMounted(() => fetchItems(1));
+onMounted(() => {
+    fetchItems(1);
+    fetchRegions();
+});
 </script>
 
 <template>
@@ -80,6 +101,7 @@ onMounted(() => fetchItems(1));
                     <th class="p-3 text-left">Slug</th>
                     <th class="p-3 text-left">Active</th>
                     <th class="p-3 text-left">Web</th>
+                    <th class="p-3 text-left">Regions</th>
                     <th class="p-3 text-left">Actions</th>
                 </tr>
             </thead>
@@ -89,6 +111,7 @@ onMounted(() => fetchItems(1));
                     <td class="p-3">{{ item.slug }}</td>
                     <td class="p-3">{{ item.is_active ? 'Yes' : 'No' }}</td>
                     <td class="p-3">{{ item.is_available_on_web ? 'Yes' : 'No' }}</td>
+                    <td class="p-3">{{ regionCodes(item.global_region_ids) }}</td>
                     <td class="p-3 flex gap-3">
                         <button @click="startEdit(item)" class="text-blue-600 hover:underline">Edit</button>
                         <button @click="remove(item)" class="text-red-600 hover:underline">Delete</button>

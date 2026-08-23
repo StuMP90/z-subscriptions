@@ -72,6 +72,6 @@ Route::middleware(['web', 'auth'])
         Route::apiResource('orders', OrderController::class)->except('destroy');
 
         Route::get('/cache-keys', [\App\Http\Controllers\Api\CacheController::class, 'index']);
-        Route::post('/cache-keys/delete', [\App\Http\Controllers\Api\CacheController::class, 'destroy']);
-        Route::post('/cache-keys/clear', [\App\Http\Controllers\Api\CacheController::class, 'clear']);
+        Route::get('/cache-keys/delete', [\App\Http\Controllers\Api\CacheController::class, 'destroy']);
+        Route::get('/cache-keys/clear', [\App\Http\Controllers\Api\CacheController::class, 'clear']);
     });

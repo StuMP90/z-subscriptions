@@ -1,58 +1,56 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Z-Subscriptions
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A multi-domain admin panel and API platform for managing subscriptions, products, orders, customers, and regional settings.
 
-## About Laravel
+This is built, so far, with mostly AI "Vibe" coding to see what is now possible with AI assistance in development.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Scope
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Admin Panel** (`admin.zsubscriptions.local`) — Inertia.js + Vue 3 interface for managing catalogue data, orders, customers and system configuration.
+- **Shop API** (`api.zsubscriptions.local`) — Internal API consumed by the admin panel through a server-side proxy.
+- **Partner API** (`partner.zsubscriptions.local`) — Partner-facing API protected by separate API keys.
+- **Cache Control** — Redis cache inspection and management for application settings.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Technology Stack
 
-## Learning Laravel
+- **Backend:** Laravel 13 (PHP 8.3), PostgreSQL, Redis
+- **Frontend:** Vue 3, Inertia.js, Tailwind CSS, Vite
+- **API Auth:** API keys stored in the `api_keys` table, basic-auth over HTTPS
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Major Work Done
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Region-aware data** — Issues, Offers, Shops, Products and Publications display region codes instead of raw IDs.
+- **Settings caching** — Application settings cached in Redis with a configurable `Default Setting Cache Time` and per-setting `cache_seconds` overrides.
+- **Cache Control page** — New admin page listing Redis cached keys with TTL/size, clearing individual keys or all keys.
+- **API key basic auth** — Replaced session sharing for the Shop and Partner APIs with `api_keys` table basic auth.
+- **Admin API proxy** — Admin frontend calls `api.zsubscriptions.local` endpoints through a backend proxy so API keys stay out of the browser bundle.
+- **Product Offers** — Renamed from generic Offers, removed unused fields, made `shop_id` and `price` behave as product-pricing values.
+- **Dashboard** — Grouped, colour-coded menu dashboard with all admin sections.
+- **Security hardening** — Removed hardcoded credentials from tracked source files and migrations.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Setup
 
-## Agentic Development
+1. Copy `.env.example` to `.env` and fill in the database, Redis and domain values.
+2. Generate an application key:
+   ```bash
+   php artisan key:generate
+   ```
+3. Run migrations:
+   ```bash
+   php artisan migrate
+   ```
+4. Create an admin user by setting `ADMIN_USER_EMAIL` and `ADMIN_USER_PASSWORD` in `.env` then running:
+   ```bash
+   php artisan db:seed --class=AdminUserSeeder
+   ```
+5. Create at least one active `is_shop` API key in the `api_keys` table and set the matching `SHOP_API_USER` / `SHOP_API_PASS` in `.env`.
+6. Install and build the frontend:
+   ```bash
+   npm install
+   npm run build
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Important Security Notes
 
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **No credentials in the browser bundle.** The admin panel uses a server-side proxy for all internal API calls.
+- **Do not commit `.env`.** It contains the application key, database password and API client credentials.

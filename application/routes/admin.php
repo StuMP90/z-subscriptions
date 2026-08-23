@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApiProxyController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\CacheController;
 use App\Http\Controllers\Admin\CountryController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\PublicationController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [LoginController::class, 'create'])->name('login');
@@ -23,6 +25,9 @@ Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('admin.logout');
+
+    Route::any('/api/proxy', [ApiProxyController::class, 'handle'])
+        ->withoutMiddleware(VerifyCsrfToken::class);
 
     Route::resource('users', UserController::class)->only(['index']);
     Route::resource('shops', ShopController::class)->only(['index']);

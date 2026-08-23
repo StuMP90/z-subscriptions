@@ -33,10 +33,10 @@ const formatSize = (bytes) => {
 
 const clearOne = async (key) => {
     if (! confirm(`Clear this key?\n${key}`)) return;
-    await fetch(`https://api.zsubscriptions.local/cache-keys/delete?key=${encodeURIComponent(key)}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' },
+    await fetch('https://api.zsubscriptions.local/cache-keys/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key }),
     });
     await fetchItems();
 };
@@ -44,9 +44,7 @@ const clearOne = async (key) => {
 const clearAll = async () => {
     if (! confirm('Clear all cache keys?')) return;
     await fetch('https://api.zsubscriptions.local/cache-keys/clear', {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' },
+        method: 'POST',
     });
     await fetchItems();
 };

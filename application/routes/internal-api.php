@@ -18,7 +18,6 @@ use App\Models\GlobalRegion;
 use App\Models\ProductType;
 use App\Models\ProductVariant;
 use App\Models\Setting;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -26,9 +25,7 @@ Route::get('/', function () {
     return response()->json(['message' => 'Internal API']);
 });
 
-Route::middleware(['web', 'auth'])
-    ->withoutMiddleware([VerifyCsrfToken::class])
-    ->group(function () {
+Route::middleware('api_key:shop')->group(function () {
         Route::apiResource('users', UserController::class)->except('destroy');
         Route::apiResource('customers', CustomerController::class)->except('destroy');
         Route::apiResource('products', ProductController::class)->except('destroy');
@@ -72,6 +69,6 @@ Route::middleware(['web', 'auth'])
         Route::apiResource('orders', OrderController::class)->except('destroy');
 
         Route::get('/cache-keys', [\App\Http\Controllers\Api\CacheController::class, 'index']);
-        Route::get('/cache-keys/delete', [\App\Http\Controllers\Api\CacheController::class, 'destroy']);
-        Route::get('/cache-keys/clear', [\App\Http\Controllers\Api\CacheController::class, 'clear']);
+        Route::post('/cache-keys/delete', [\App\Http\Controllers\Api\CacheController::class, 'destroy']);
+        Route::post('/cache-keys/clear', [\App\Http\Controllers\Api\CacheController::class, 'clear']);
     });

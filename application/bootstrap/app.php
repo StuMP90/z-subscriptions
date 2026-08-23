@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\ApiKeyBasicAuth;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveShop;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: HandleInertiaRequests::class);
         $middleware->alias([
+            'api_key' => ApiKeyBasicAuth::class,
             'resolve.shop' => ResolveShop::class,
         ]);
     })

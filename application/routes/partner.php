@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return response()->json(['message' => 'Partner API']);
+Route::middleware('api_key:partner')->group(function () {
+    Route::get('/', function () {
+        return response()->json(['message' => 'Partner API']);
+    });
 });
